@@ -12,7 +12,7 @@
       <h1>Flip 7</h1>
       <div class="target">
         <label for="target-input">Win at</label>
-        <input id="target-input" type="number" min="1" step="1" value="200" />
+        <input id="target-input" type="number" inputmode="numeric" min="1" step="1" value="200" />
         <span>pts</span>
       </div>
     </header>
@@ -28,15 +28,17 @@
     </section>
 
     <section id="game" class="game hidden">
-      <table id="score-table" class="score-table">
-        <thead>
-          <tr id="score-head"></tr>
-        </thead>
-        <tbody id="score-body"></tbody>
-        <tfoot>
-          <tr id="score-total"></tr>
-        </tfoot>
-      </table>
+      <div class="table-wrap">
+        <table id="score-table" class="score-table">
+          <thead>
+            <tr id="score-head"></tr>
+          </thead>
+          <tbody id="score-body"></tbody>
+          <tfoot>
+            <tr id="score-total"></tr>
+          </tfoot>
+        </table>
+      </div>
 
       <div id="banner" class="banner hidden"></div>
 

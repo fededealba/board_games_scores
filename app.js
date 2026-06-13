@@ -109,6 +109,7 @@ function renderGame() {
       const td = document.createElement("td");
       const input = document.createElement("input");
       input.type = "number";
+      input.inputMode = "numeric";
       input.step = "1";
       input.value = round[p.id] ?? "";
       input.placeholder = "0";
