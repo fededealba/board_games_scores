@@ -84,16 +84,12 @@ function renderSetup() {
 
 /* ---------- game phase ---------- */
 function renderGame() {
-  const win = winnerId();
-  const lead = leaderId();
-
   // header
   const head = $("score-head");
   head.innerHTML = "<th>Round</th>";
   state.players.forEach((p) => {
     const th = document.createElement("th");
     th.textContent = p.name;
-    if (p.id === win) th.classList.add("col-winner");
     head.appendChild(th);
   });
 
@@ -113,7 +109,6 @@ function renderGame() {
       input.step = "1";
       input.value = round[p.id] ?? "";
       input.placeholder = "0";
-      input.disabled = win !== null;
       input.addEventListener("input", () => {
         const v = input.value.trim();
         round[p.id] = v === "" ? "" : Number(v);
@@ -127,24 +122,15 @@ function renderGame() {
   });
 
   updateTotals();
-
-  // banner
-  const banner = $("banner");
-  if (win !== null) {
-    const p = state.players.find((x) => x.id === win);
-    banner.textContent = `🏆 ${p.name} wins with ${totalFor(win)} points!`;
-    banner.classList.remove("hidden");
-    $("add-round-btn").disabled = true;
-  } else {
-    banner.classList.add("hidden");
-    $("add-round-btn").disabled = false;
-  }
 }
 
-// Recompute footer totals only (cheap, called on every keystroke).
+// Recompute footer totals + winner banner. Cheap; called on every keystroke.
+// Inputs stay editable throughout so the whole round can be entered (and typos
+// fixed) even after someone crosses the target.
 function updateTotals() {
   const win = winnerId();
   const lead = leaderId();
+
   const foot = $("score-total");
   foot.innerHTML = "<td>Total</td>";
   state.players.forEach((p) => {
@@ -155,9 +141,20 @@ function updateTotals() {
     foot.appendChild(td);
   });
 
-  // If a winner just emerged from typing, re-render to lock inputs + show banner.
-  const bannerHidden = $("banner").classList.contains("hidden");
-  if (win !== null && bannerHidden) renderGame();
+  // highlight the winning column header without rebuilding the table
+  state.players.forEach((p, i) => {
+    const th = $("score-head").children[i + 1];
+    if (th) th.classList.toggle("col-winner", p.id === win);
+  });
+
+  const banner = $("banner");
+  if (win !== null) {
+    const p = state.players.find((x) => x.id === win);
+    banner.textContent = `🏆 ${p.name} wins with ${totalFor(win)} points!`;
+    banner.classList.remove("hidden");
+  } else {
+    banner.classList.add("hidden");
+  }
 }
 
 /* ---------- view switching ---------- */
