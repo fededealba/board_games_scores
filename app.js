@@ -109,25 +109,34 @@ function renderSetup() {
 }
 
 /* ---------- game phase ---------- */
+// Layout is transposed: one row per player, one column per round, with the
+// player name pinned left and the running Total pinned right.
 function renderGame() {
-  // header row
+  // header row: Player | 1 | 2 | … | Total
   const head = $("score-head");
-  head.innerHTML = "<th>Round</th>";
-  state.players.forEach((p) => {
+  head.innerHTML = "<th>Player</th>";
+  state.rounds.forEach((_, ri) => {
     const th = document.createElement("th");
-    th.textContent = p.name;
+    th.textContent = ri + 1;
     head.appendChild(th);
   });
+  const totalHead = document.createElement("th");
+  totalHead.textContent = "Total";
+  totalHead.className = "total-col";
+  head.appendChild(totalHead);
 
-  // one row per round
+  // one row per player
   const body = $("score-body");
   body.innerHTML = "";
-  state.rounds.forEach((round, ri) => {
+  state.players.forEach((p) => {
     const tr = document.createElement("tr");
-    const label = document.createElement("td");
-    label.textContent = ri + 1;
-    tr.appendChild(label);
-    state.players.forEach((p) => {
+
+    const name = document.createElement("td");
+    name.textContent = p.name;
+    name.className = "player-name";
+    tr.appendChild(name);
+
+    state.rounds.forEach((round) => {
       const td = document.createElement("td");
       const input = document.createElement("input");
       input.type = "number";
@@ -144,33 +153,34 @@ function renderGame() {
       td.appendChild(input);
       tr.appendChild(td);
     });
+
+    const total = document.createElement("td");
+    total.className = "total-cell";
+    tr.appendChild(total);
+
     body.appendChild(tr);
   });
 
   updateTotals();
 }
 
-// Recompute footer totals + winner banner. Cheap; called on every keystroke.
+// Recompute the Total column + winner banner. Cheap; called on every keystroke.
 // Inputs stay editable throughout so the whole round can be entered (and typos
 // fixed) even after someone crosses the limit.
 function updateTotals() {
   const winners = new Set(winnerIds());
   const leaders = new Set(leaderIds());
+  const rows = $("score-body").children;
 
-  const foot = $("score-total");
-  foot.innerHTML = "<td>Total</td>";
-  state.players.forEach((p) => {
-    const td = document.createElement("td");
-    td.textContent = totalFor(p.id);
-    if (winners.has(p.id)) td.classList.add("winner");
-    else if (winners.size === 0 && leaders.has(p.id)) td.classList.add("leader");
-    foot.appendChild(td);
-  });
-
-  // highlight the winning column header(s) without rebuilding the table
   state.players.forEach((p, i) => {
-    const th = $("score-head").children[i + 1];
-    if (th) th.classList.toggle("col-winner", winners.has(p.id));
+    const row = rows[i];
+    if (!row) return;
+    const cell = row.lastElementChild; // the Total cell
+    cell.textContent = totalFor(p.id);
+    const isWinner = winners.has(p.id);
+    cell.classList.toggle("winner", isWinner);
+    cell.classList.toggle("leader", !winners.size && leaders.has(p.id));
+    row.classList.toggle("winner-row", isWinner);
   });
 
   const banner = $("banner");

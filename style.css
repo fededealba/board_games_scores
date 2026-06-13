@@ -144,21 +144,30 @@ h2 { margin: 0 0 14px; font-size: 1.1rem; color: var(--muted); font-weight: 600;
   white-space: nowrap;
 }
 .score-table thead th { color: var(--muted); font-size: 0.9rem; font-weight: 600; }
-/* keep the round/label column visible while scrolling players horizontally */
+
+/* Player name pinned to the left edge while round columns scroll */
 .score-table th:first-child, .score-table td:first-child {
-  text-align: left; color: var(--muted);
-  position: sticky; left: 0; background: var(--panel); z-index: 1;
+  position: sticky; left: 0; z-index: 1;
+  text-align: left; background: var(--panel);
 }
-.score-table tfoot td:first-child { background: var(--panel); }
+.score-table td.player-name { color: var(--text); font-weight: 600; }
+
+/* Total pinned to the right edge so it's always visible */
+.score-table th:last-child, .score-table td:last-child {
+  position: sticky; right: 0; z-index: 1;
+  background: var(--panel);
+  border-left: 2px solid var(--border);
+}
+.score-table td.total-cell { font-weight: 800; font-size: 1.15rem; }
+.score-table td.total-cell.leader { color: var(--accent); }
+.score-table td.total-cell.winner { color: var(--win); }
+.score-table thead th.total-col { color: var(--text); }
+
+.score-table tr.winner-row td:first-child { color: var(--win); }
+
 .score-table input {
   width: 64px; text-align: center; padding: 8px 6px;
 }
-.score-table tfoot td {
-  font-weight: 800; font-size: 1.15rem; border-top: 2px solid var(--border); border-bottom: none;
-}
-.score-table tfoot td.leader { color: var(--accent); }
-.score-table tfoot td.winner { color: var(--win); }
-.col-winner { color: var(--win) !important; }
 
 .banner {
   margin: 18px 0 4px; padding: 14px 16px; border-radius: 12px; text-align: center;
