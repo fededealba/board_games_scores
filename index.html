@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Flip 7 — Score Tracker</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="app">
+    <header class="header">
+      <h1>Flip 7</h1>
+      <div class="target">
+        <label for="target-input">Win at</label>
+        <input id="target-input" type="number" min="1" step="1" value="200" />
+        <span>pts</span>
+      </div>
+    </header>
+
+    <section id="setup" class="setup">
+      <h2>Players</h2>
+      <form id="add-player-form" class="add-player">
+        <input id="player-name" type="text" placeholder="Add a player…" autocomplete="off" maxlength="20" />
+        <button type="submit">Add</button>
+      </form>
+      <ul id="player-list" class="player-list"></ul>
+      <button id="start-btn" class="primary" disabled>Start game</button>
+    </section>
+
+    <section id="game" class="game hidden">
+      <table id="score-table" class="score-table">
+        <thead>
+          <tr id="score-head"></tr>
+        </thead>
+        <tbody id="score-body"></tbody>
+        <tfoot>
+          <tr id="score-total"></tr>
+        </tfoot>
+      </table>
+
+      <div id="banner" class="banner hidden"></div>
+
+      <div class="controls">
+        <button id="add-round-btn" class="primary">Add round</button>
+        <button id="new-game-btn" class="ghost">New game</button>
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
