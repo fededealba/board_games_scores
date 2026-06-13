@@ -3,21 +3,47 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Flip 7 — Score Tracker</title>
+  <title>Board Game Scores</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <main class="app">
     <header class="header">
-      <h1>Flip 7</h1>
-      <div class="target">
-        <label for="target-input">Win at</label>
-        <input id="target-input" type="number" inputmode="numeric" min="1" step="1" value="200" />
-        <span>pts</span>
-      </div>
+      <button id="home-btn" class="home-btn hidden" type="button" title="Back to games">‹</button>
+      <h1 id="title">Board Games</h1>
+      <div id="rule" class="rule hidden"></div>
     </header>
 
-    <section id="setup" class="setup">
+    <section id="home" class="home">
+      <h2>Choose a game</h2>
+
+      <button id="pick-flip7" class="game-card" type="button">
+        <span class="game-name">Flip 7</span>
+        <span class="game-desc">First to 200 — most points wins</span>
+      </button>
+
+      <form id="custom-form" class="game-card custom">
+        <span class="game-name">Custom game</span>
+        <label class="field">
+          <span>Name</span>
+          <input id="custom-name" type="text" placeholder="Custom game" maxlength="24" autocomplete="off" />
+        </label>
+        <label class="field">
+          <span>Winner is</span>
+          <select id="custom-mode">
+            <option value="most">Most points</option>
+            <option value="least">Fewest points</option>
+          </select>
+        </label>
+        <label class="field">
+          <span>Point limit</span>
+          <input id="custom-target" type="number" inputmode="numeric" min="1" step="1" value="100" />
+        </label>
+        <button type="submit" class="primary">Create game</button>
+      </form>
+    </section>
+
+    <section id="setup" class="setup hidden">
       <h2>Players</h2>
       <form id="add-player-form" class="add-player">
         <input id="player-name" type="text" placeholder="Add a player…" autocomplete="off" maxlength="20" />
