@@ -40,25 +40,28 @@ function limitReached() {
   return state.players.some((p) => totalFor(p.id) >= state.game.target);
 }
 
-// Best player for the current win condition: highest total ("most") or
-// lowest total ("least"). Used both for the live leader and the final winner.
-function bestId() {
+// Best total for the current win condition: highest ("most") or lowest ("least").
+function bestTotal() {
   const least = state.game.mode === "least";
-  let best = null;
-  let bestTotal = least ? Infinity : -Infinity;
+  let best = least ? Infinity : -Infinity;
   for (const p of state.players) {
     const t = totalFor(p.id);
-    if (least ? t < bestTotal : t > bestTotal) {
-      bestTotal = t;
-      best = p.id;
-    }
+    if (least ? t < best : t > best) best = t;
   }
   return best;
 }
 
-// Winner only exists once the limit has been reached.
-const winnerId = () => (limitReached() ? bestId() : null);
-const leaderId = () => bestId();
+// Players sharing the best total (the live leader, or — once the limit is
+// reached — the winner). More than one id means a tie.
+function bestIds() {
+  if (state.players.length === 0) return [];
+  const bt = bestTotal();
+  return state.players.filter((p) => totalFor(p.id) === bt).map((p) => p.id);
+}
+
+// Winners only exist once the point limit has been reached.
+const winnerIds = () => (limitReached() ? bestIds() : []);
+const leaderIds = () => bestIds();
 
 function ruleText() {
   const g = state.game;
@@ -151,33 +154,46 @@ function renderGame() {
 // Inputs stay editable throughout so the whole round can be entered (and typos
 // fixed) even after someone crosses the limit.
 function updateTotals() {
-  const win = winnerId();
-  const lead = leaderId();
+  const winners = new Set(winnerIds());
+  const leaders = new Set(leaderIds());
 
   const foot = $("score-total");
   foot.innerHTML = "<td>Total</td>";
   state.players.forEach((p) => {
     const td = document.createElement("td");
     td.textContent = totalFor(p.id);
-    if (p.id === win) td.classList.add("winner");
-    else if (p.id === lead) td.classList.add("leader");
+    if (winners.has(p.id)) td.classList.add("winner");
+    else if (winners.size === 0 && leaders.has(p.id)) td.classList.add("leader");
     foot.appendChild(td);
   });
 
-  // highlight the winning column header without rebuilding the table
+  // highlight the winning column header(s) without rebuilding the table
   state.players.forEach((p, i) => {
     const th = $("score-head").children[i + 1];
-    if (th) th.classList.toggle("col-winner", p.id === win);
+    if (th) th.classList.toggle("col-winner", winners.has(p.id));
   });
 
   const banner = $("banner");
-  if (win !== null) {
-    const p = state.players.find((x) => x.id === win);
-    banner.textContent = `🏆 ${p.name} wins with ${totalFor(win)} points!`;
+  if (winners.size === 1) {
+    const p = state.players.find((x) => winners.has(x.id));
+    banner.textContent = `🏆 ${p.name} wins with ${totalFor(p.id)} points!`;
+    banner.classList.remove("hidden", "tie");
+  } else if (winners.size > 1) {
+    const names = state.players.filter((x) => winners.has(x.id)).map((x) => x.name);
+    const pts = totalFor([...winners][0]);
+    banner.textContent = `🤝 Tie at ${pts} points — ${joinNames(names)}`;
     banner.classList.remove("hidden");
+    banner.classList.add("tie");
   } else {
     banner.classList.add("hidden");
+    banner.classList.remove("tie");
   }
+}
+
+// "A & B" or "A, B & C"
+function joinNames(names) {
+  if (names.length <= 1) return names.join("");
+  return names.slice(0, -1).join(", ") + " & " + names[names.length - 1];
 }
 
 /* ---------- view switching ---------- */

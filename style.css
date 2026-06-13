@@ -85,13 +85,17 @@ input:focus, select:focus { border-color: var(--accent-2); }
 .game-card.custom { cursor: default; }
 .game-card.custom:hover { filter: none; }
 .game-card.custom:active { transform: none; }
+/* separate the custom card's heading from its form fields */
+.game-card.custom .game-name { padding-bottom: 14px; border-bottom: 1px solid var(--border); }
 
+/* stacked label-over-input fields */
 .field {
-  display: flex; align-items: center; justify-content: space-between;
-  gap: 12px; margin-top: 12px; color: var(--muted); font-size: 0.95rem;
+  display: flex; flex-direction: column;
+  gap: 6px; margin-top: 14px;
 }
-.field input, .field select { flex: 0 0 auto; width: 150px; }
-.game-card.custom .primary { width: 100%; margin-top: 16px; }
+.field > span { color: var(--muted); font-size: 0.85rem; }
+.field input, .field select { width: 100%; }
+.game-card.custom .primary { width: 100%; margin-top: 18px; }
 
 button {
   cursor: pointer;
@@ -160,6 +164,9 @@ h2 { margin: 0 0 14px; font-size: 1.1rem; color: var(--muted); font-weight: 600;
   margin: 18px 0 4px; padding: 14px 16px; border-radius: 12px; text-align: center;
   font-size: 1.15rem; font-weight: 700;
   background: rgba(46, 204, 113, 0.15); border: 1px solid var(--win); color: var(--win);
+}
+.banner.tie {
+  background: rgba(255, 176, 32, 0.15); border-color: var(--accent); color: var(--accent);
 }
 
 .controls { display: flex; gap: 10px; margin-top: 18px; }
